@@ -30,6 +30,7 @@ func (c *commands) register(name string, f func(*state, command) error) {
 }
 
 func handlerLogin(s *state, cmd command) error {
+	fmt.Println(len(cmd.args))
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("expected username, got %v", cmd.args)
 	}
@@ -38,7 +39,7 @@ func handlerLogin(s *state, cmd command) error {
 	if err := s.cfg.SetUser(userName); err != nil {
 		return err
 	}
-	fmt.Printf("User set to: %s", userName)
+	fmt.Printf("User set to: %s\n", userName)
 
 	return nil
 }

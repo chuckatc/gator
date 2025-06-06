@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -37,11 +36,8 @@ func main() {
 		args = os.Args[2:]
 	}
 
-	cmds.run(&s, command{name: cmdName, args: args})
-
-	fmt.Println("", cmdName, args)
-	fmt.Println("", s, cmds)
-
-	fmt.Println(cfg.CurrentUserName)
-	fmt.Println(cfg.DbURL)
+	cmd := command{name: cmdName, args: args}
+	if err := cmds.run(&s, cmd); err != nil {
+		log.Fatalln(err)
+	}
 }
