@@ -1,14 +1,18 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 	"path"
 
 	"github.com/chuckatc/gator/internal/config"
+	"github.com/chuckatc/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
@@ -40,4 +44,11 @@ func main() {
 	if err := cmds.run(&s, cmd); err != nil {
 		log.Fatalln(err)
 	}
+
+	db, err := sql.Open("postgres", s.cfg.DbURL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	dbQueries := database.New(db)
+	s.db = dbQueries
 }
