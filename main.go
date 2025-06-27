@@ -22,7 +22,14 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	db, err := sql.Open("postgres", cfg.DbURL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	dbQueries := database.New(db)
+
 	s := state{
+		db:  dbQueries,
 		cfg: &cfg,
 	}
 
@@ -30,6 +37,7 @@ func main() {
 		handlers: make(map[string]func(*state, command) error),
 	}
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <command> [args ...]", path.Base(os.Args[0]))
@@ -44,11 +52,4 @@ func main() {
 	if err := cmds.run(&s, cmd); err != nil {
 		log.Fatalln(err)
 	}
-
-	db, err := sql.Open("postgres", s.cfg.DbURL)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	dbQueries := database.New(db)
-	s.db = dbQueries
 }
