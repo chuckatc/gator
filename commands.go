@@ -64,7 +64,7 @@ func handlerLogin(s *state, cmd command) error {
 
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.args) != 1 {
-		return fmt.Errorf("expected username, got %v", cmd.args)
+		return fmt.Errorf("expected username, got: %v", cmd.args)
 	}
 	userName := cmd.args[0]
 
@@ -96,4 +96,17 @@ func handlerRegister(s *state, cmd command) error {
 func isUniqueViolation(err error) bool {
 	var pqErr *pq.Error
 	return errors.As(err, &pqErr) && pqErr.Code == "23505"
+}
+
+func handlerReset(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("unexpected arguments to reset: %v", cmd.args)
+	}
+
+	if err := s.db.TruncateUsers(context.Background()); err != nil {
+		return err
+	}
+
+	fmt.Println("Users reset successfully")
+	return nil
 }
