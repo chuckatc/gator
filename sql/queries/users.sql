@@ -14,5 +14,10 @@ FROM users
 WHERE name = $1
 LIMIT 1;
 
+-- name: GetUsers :many
+SELECT *
+FROM users
+ORDER BY name;
+
 -- name: TruncateUsers :exec
 TRUNCATE TABLE users;

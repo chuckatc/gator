@@ -110,3 +110,24 @@ func handlerReset(s *state, cmd command) error {
 	fmt.Println("Users reset successfully")
 	return nil
 }
+
+func handlerUsers(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("unexpected arguments to users: %v", cmd.args)
+	}
+
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		currentTag := ""
+		if user.Name == s.cfg.CurrentUserName {
+			currentTag = " (current)"
+		}
+		fmt.Printf("* %s%s\n", user.Name, currentTag)
+	}
+
+	return nil
+}
